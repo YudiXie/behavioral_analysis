@@ -120,5 +120,5 @@ def two_set_scatter_plot(data1, data2, labels, title_str, ylabel, save_str):
     plt.title(title_str + "\nMann-Whitney U rank test P = {:.3f}".format(p_value))
     plt.ylabel(ylabel)
     adjust_figure()
-    plt.savefig(os.path.join('./data/', save_str + '.pdf'), transparent=True, bbox_inches="tight")
+    plt.savefig(os.path.join('./figures/', save_str + '.pdf'), transparent=True, bbox_inches="tight")
     plt.close()

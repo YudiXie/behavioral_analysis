@@ -37,10 +37,7 @@ def get_tra_dis(trajectory, p1, p2):
     return mean_dis
 
 
-if __name__ == '__main__':
-    df = make_df()
-    extract_trajectories(df)
-
+def plot_all_tra(df):
     # plot trajectories
     for i_video in range(len(df)):
         # load trajectories from files
@@ -54,6 +51,12 @@ if __name__ == '__main__':
                                     df.loc[i_video, 'center_port'],
                                     df.loc[i_video, 'left_port'],
                                     df.loc[i_video, 'right_port'])
+
+
+if __name__ == '__main__':
+    df = make_df()
+    extract_trajectories(df)
+    plot_all_tra(df)
 
     # calculate various measures for each trajectory
     for i_video in range(len(df)):
