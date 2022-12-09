@@ -6,6 +6,7 @@ import plots
 from group_analysis import group_ana
 from dist_analysis import dist_ana
 
+
 def plot_all_tra(df):
     # plot trajectories
     for i_video in range(len(df)):
