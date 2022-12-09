@@ -45,3 +45,4 @@ def dist_ana(df):
             plt.ylim([0, 5])
             adjust_figure()
             plt.savefig(os.path.join('./figures/', exp_name + '.pdf'), transparent=True, bbox_inches="tight")
+            plt.close()
