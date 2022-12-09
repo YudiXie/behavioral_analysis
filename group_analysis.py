@@ -63,7 +63,7 @@ def group_ana(df):
             right_tra = [np.array(tra) for tra in tra_dict['right_tra']]
 
             # interpolate trajectories and calculate distance to averaged trajectory
-            num_p = 10
+            num_p = 11
             left_tra_interpld = np.array([interpolate_tra(tra, num_p) for tra in left_tra])
             left_diff2avg_square = (left_tra_interpld - left_tra_interpld.mean(axis=0)) ** 2
             left_dist2avg = np.sqrt(left_diff2avg_square[:, :, 0] + left_diff2avg_square[:, :, 1])
