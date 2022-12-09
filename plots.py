@@ -68,3 +68,56 @@ def plot_trajectories(exp_name,
     plt.savefig(os.path.join('./figures', exp_name+'.pdf'), transparent=True)
     plt.close()
 
+
+def two_set_scatter_plot(data1, data2, labels, title_str, ylabel, save_str):
+    """
+    scatter plot for two groups
+        :param data1: pandas series for data group 1
+        :param data2: pandas series for data group 1
+        :param labels: labels for two groups
+        :param title_str: string for title
+        :param ylabel: y label string
+        :param save_str: string to save
+    """
+    mean_data1 = data1.mean()
+    sem_data1 = data1.sem()
+    data1_x = [1, ] * len(data1)
+
+    mean_data2 = data2.mean()
+    sem_data2 = data2.sem()
+    data2_x = [2, ] * len(data2)
+
+    # Mann-Whitney U rank test
+    p_value = scipy.stats.mannwhitneyu(data1.dropna(), data2.dropna()).pvalue
+
+    plt.figure(figsize=(2.5, 5))
+    plt.scatter(data1_x, data1, 100, color='w', edgecolors='k', alpha=0.5)
+    plt.errorbar([1], mean_data1, yerr=sem_data1,
+                 fmt="o",
+                 mfc='white',
+                 ecolor='k',
+                 color='k',
+                 elinewidth=1,
+                 capsize=10,
+                 markersize=10
+                 )
+
+    plt.scatter(data2_x, data2, 100, color='mediumorchid', edgecolors='k', alpha=0.5)
+    plt.errorbar([2], mean_data2, yerr=sem_data2,
+                 fmt="o",
+                 mfc='mediumorchid',
+                 ecolor='k',
+                 color='k',
+                 elinewidth=1,
+                 capsize=10,
+                 markersize=10
+                 )
+
+    plt.xticks([1, 2], labels, rotation=45)
+    plt.locator_params(nbins=5, axis='y')
+    plt.xlim([0.5, 2.5])
+    plt.title(title_str + "\nMann-Whitney U rank test P = {:.3f}".format(p_value))
+    plt.ylabel(ylabel)
+    adjust_figure()
+    plt.savefig(save_str + '.pdf', transparent=True, bbox_inches="tight")
+    plt.close()
