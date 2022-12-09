@@ -4,7 +4,7 @@ from make_dataframe import make_df
 from extract import extract_trajectories
 import plots
 from group_analysis import group_ana
-
+from dist_analysis import dist_ana
 
 def plot_all_tra(df):
     # plot trajectories
@@ -27,5 +27,4 @@ if __name__ == '__main__':
     extract_trajectories(df)
     plot_all_tra(df)
     group_ana(df)
-
-
+    dist_ana(df)
