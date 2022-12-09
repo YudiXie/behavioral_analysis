@@ -8,6 +8,9 @@ from plots import adjust_figure
 
 
 def dist_ana(df):
+    """
+    analyze the distance between the trajectories and the optimal trajectories
+    """
     for i_video in range(len(df)):
         # extract trajectories from files
         json_path = df.loc[i_video, 'tra_dict_path']
@@ -44,5 +47,5 @@ def dist_ana(df):
                       + exp_name)
             plt.ylim([0, 5])
             adjust_figure()
-            plt.savefig(os.path.join('./figures/', exp_name + '.pdf'), transparent=True, bbox_inches="tight")
+            plt.savefig(os.path.join('./figures/', exp_name + '_dist.pdf'), transparent=True, bbox_inches="tight")
             plt.close()

@@ -66,7 +66,7 @@ def plot_trajectories(exp_name,
               f'\n number of left trajectories: {len(left_tra_list)} '
               f'\n  number of right trajectories: {len(right_tra_list)}')
     adjust_figure()
-    plt.savefig(os.path.join('./figures', exp_name+'.pdf'), transparent=True)
+    plt.savefig(os.path.join('./figures', exp_name+'_tra.pdf'), transparent=True)
     plt.close()
 
 
