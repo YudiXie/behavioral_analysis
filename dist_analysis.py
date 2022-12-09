@@ -1,7 +1,7 @@
 import os
 import json
 import numpy as np
-from group_analysis import get_tra_dis
+from group_analysis import get_tra_dis2line
 import matplotlib.pyplot as plt
 
 from plots import adjust_figure
@@ -31,11 +31,11 @@ def dist_ana(df):
 
             exp_name = df.loc[i_video, 'exp_name']
 
-            left_tra_dis = [get_tra_dis(tra, center_port, left_port) for tra in left_tra_array]
-            right_tra_dis = [get_tra_dis(tra, center_port, right_port) for tra in right_tra_array]
+            left_tra_dis = [get_tra_dis2line(tra, center_port, left_port) for tra in left_tra_array]
+            right_tra_dis = [get_tra_dis2line(tra, center_port, right_port) for tra in right_tra_array]
             all_dis = left_tra_dis + right_tra_dis
             mean_dis = np.array(all_dis).mean()
-            df.loc[i_video, 'avg_tra_dis'] = mean_dis  # log
+            df.loc[i_video, 'avg_tra_dis2line'] = mean_dis  # log
 
             plt.figure()
             plt.scatter(np.arange(len(left_tra_dis)), left_tra_dis, label='left tra.')
