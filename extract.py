@@ -4,21 +4,6 @@ import pandas as pd
 import json
 
 
-def get_port_loc(df, name):
-    x_array = df.loc[:, (name, 'x')]
-    y_array = df.loc[:, (name, 'y')]
-
-    # filter low likelihood points
-    ll_array = df.loc[:, (name, 'likelihood')]
-    filter_idx = ll_array < 0.98
-    x_array.loc[filter_idx] = np.nan
-    y_array.loc[filter_idx] = np.nan
-
-    # filter outliers for port positions
-
-    return x_array.mean(), y_array.mean()
-
-
 def distance(x1, y1, x2, y2):
     return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
@@ -40,19 +25,9 @@ def extract_trajectories(data_frame):
             filename = os.path.join('./data/TwoOdor', csv_name)
             data = pd.read_csv(filename, header=[1, 2], index_col=0)
 
-            # extract port location
-            centerport_x, centerport_y = get_port_loc(data, 'centerport')
-            leftport_x, leftport_y = get_port_loc(data, 'leftport')
-            rightport_x, rightport_y = get_port_loc(data, 'rightport')
-
-            print(f'center to left distance (pixels): ',
-                  distance(centerport_x, centerport_y, leftport_x, leftport_y))
-            print(f'center to right distance (pixels): ',
-                  distance(centerport_x, centerport_y, rightport_x, rightport_y))
-
-            data_frame.loc[i_video, 'center_port'] = (centerport_x, centerport_y)
-            data_frame.loc[i_video, 'left_port'] = (leftport_x, leftport_y)
-            data_frame.loc[i_video, 'right_port'] = (rightport_x, rightport_y)
+            centerport_x, centerport_y = data_frame.loc[i_video, 'center_port']
+            leftport_x, leftport_y = data_frame.loc[i_video, 'left_port']
+            rightport_x, rightport_y = data_frame.loc[i_video, 'right_port']
 
             # extract trajectories
             nose_x = data.loc[:, ('nose', 'x')]

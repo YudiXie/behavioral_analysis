@@ -1,5 +1,23 @@
 import os
+import numpy as np
 import pandas as pd
+
+from extract import distance
+
+
+def get_port_loc(df, name):
+    x_array = df.loc[:, (name, 'x')]
+    y_array = df.loc[:, (name, 'y')]
+
+    # filter low likelihood points
+    ll_array = df.loc[:, (name, 'likelihood')]
+    filter_idx = ll_array < 0.98
+    x_array.loc[filter_idx] = np.nan
+    y_array.loc[filter_idx] = np.nan
+
+    # filter outliers for port positions
+
+    return x_array.mean(), y_array.mean()
 
 
 def make_df():
@@ -62,10 +80,30 @@ def make_df():
               + data_frame.loc[i_video, 'session']
         data_frame.loc[i_video, 'exp_name'] = exp
 
-        if data_frame.loc[i_video, 'csv_path'] is not None:
+        csv_name = data_frame.loc[i_video, 'csv_path']
+        if csv_name is not None:
+
+            # set tra_dict_path
             tra_dict_path = exp + "tra_dict.json"
             full_tra_dict_path = os.path.join('./', 'data', 'extracted_trajectories', tra_dict_path)
             data_frame.loc[i_video, 'tra_dict_path'] = full_tra_dict_path
+
+            # set location of ports
+            filename = os.path.join('./data/TwoOdor', csv_name)
+            data = pd.read_csv(filename, header=[1, 2], index_col=0)
+
+            centerport_x, centerport_y = get_port_loc(data, 'centerport')
+            leftport_x, leftport_y = get_port_loc(data, 'leftport')
+            rightport_x, rightport_y = get_port_loc(data, 'rightport')
+
+            print(f'center to left distance (pixels): ',
+                  distance(centerport_x, centerport_y, leftport_x, leftport_y))
+            print(f'center to right distance (pixels): ',
+                  distance(centerport_x, centerport_y, rightport_x, rightport_y))
+
+            data_frame.loc[i_video, 'center_port'] = (centerport_x, centerport_y)
+            data_frame.loc[i_video, 'left_port'] = (leftport_x, leftport_y)
+            data_frame.loc[i_video, 'right_port'] = (rightport_x, rightport_y)
 
     return data_frame
 
