@@ -20,7 +20,9 @@ def plot_trajectories(exp_name,
                       left_tra_list, right_tra_list,
                       centerport_pos,
                       leftport_pos,
-                      rightport_pos):
+                      rightport_pos,
+                      left_avg_tra=None,
+                      right_avg_tra=None):
     """
     Plot trajectories in a single video
     """
@@ -29,16 +31,27 @@ def plot_trajectories(exp_name,
     rightport_x, rightport_y = rightport_pos
 
     plt.figure()
-    # plot multiple tra
+    # plot multiple left tra
     for tra in left_tra_list:
         tra_zip = list(zip(*tra))
         plt.plot(tra_zip[0], tra_zip[1], color='royalblue', alpha=0.1)
 
-    # plot multiple tra
+    if left_avg_tra is not None:
+        plt.plot(left_avg_tra[:, 0], left_avg_tra[:, 1], color='k', linestyle='dashed')
+    else:
+        # line connecting ports
+        plt.plot([centerport_x, leftport_x], [centerport_y, leftport_y], 'k', linestyle='dashed')
+
+    # plot multiple right tra
     for tra in right_tra_list:
         tra_zip = list(zip(*tra))
         plt.plot(tra_zip[0], tra_zip[1], color='deeppink', alpha=0.1)
 
+    if right_avg_tra is not None:
+        plt.plot(right_avg_tra[:, 0], right_avg_tra[:, 1], color='k', linestyle='dashed')
+    else:
+        # line connecting ports
+        plt.plot([centerport_x, rightport_x], [centerport_y, rightport_y], 'k', linestyle='dashed')
 
     # show ports
     port_color = 'k'
@@ -49,10 +62,6 @@ def plot_trajectories(exp_name,
     plt.text(leftport_x, leftport_y + 2.5, 'left port')
     plt.scatter(rightport_x, rightport_y, port_size, port_color)
     plt.text(rightport_x, rightport_y + 2.5, 'right port')
-
-    # line connecting ports
-    plt.plot([centerport_x, leftport_x], [centerport_y, leftport_y], 'k', linestyle='dashed')
-    plt.plot([centerport_x, rightport_x], [centerport_y, rightport_y], 'k', linestyle='dashed')
 
     plt.ylim([centerport_y - 5, centerport_y + 30])
     plt.xlim([centerport_x - 60, centerport_x + 60])

@@ -7,6 +7,22 @@ pixel_per_m = 325 / 0.320
 fps = 84
 
 
+def interpolate_tra(trajectory, num_points=10):
+    """
+    interpolate the trajectories to the same length by linear method
+    :param trajectory: the first two cols of trajectory is x and y positions in pixels
+    :param num_points: number of points to interpolate
+    :return: interpolated trajectory, size (num_points, 2)
+    """
+    time = np.linspace(0.0, 1.0, len(trajectory))
+    new_time = np.linspace(0.0, 1.0, num_points)
+
+    x = np.interp(new_time, time, trajectory[:, 0])
+    y = np.interp(new_time, time, trajectory[:, 1])
+
+    return np.stack((x, y), axis=1)
+
+
 def get_tra_avg_speed(trajectory):
     """
     get the averaged velocity of a single trajectory
