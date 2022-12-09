@@ -39,7 +39,7 @@ def get_tra_dis(trajectory, p1, p2):
 
 if __name__ == '__main__':
     df = make_df()
-    # extract_trajectories(df)
+    extract_trajectories(df)
 
     # plot trajectories
     for i_video in range(len(df)):
