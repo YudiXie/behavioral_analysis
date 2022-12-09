@@ -1,3 +1,4 @@
+import os
 import json
 import numpy as np
 from group_analysis import get_tra_dis
@@ -25,9 +26,7 @@ def dist_ana(df):
             left_port = df.loc[i_video, 'left_port']
             right_port = df.loc[i_video, 'right_port']
 
-            exp_name = df.loc[i_video, 'mouse_name'] \
-                       + df.loc[i_video, 'genotype'] \
-                       + df.loc[i_video, 'session']
+            exp_name = df.loc[i_video, 'exp_name']
 
             left_tra_dis = [get_tra_dis(tra, center_port, left_port) for tra in left_tra_array]
             right_tra_dis = [get_tra_dis(tra, center_port, right_port) for tra in right_tra_array]
@@ -45,4 +44,4 @@ def dist_ana(df):
                       + exp_name)
             plt.ylim([0, 5])
             adjust_figure()
-            plt.savefig(exp_name + '.pdf', transparent=True, bbox_inches="tight")
+            plt.savefig(os.path.join('./figures/', exp_name + '.pdf'), transparent=True, bbox_inches="tight")
