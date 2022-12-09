@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import scipy.stats
 
 plt.rcParams.update({'font.size': 14})
 
