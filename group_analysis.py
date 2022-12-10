@@ -113,7 +113,8 @@ def group_ana(df):
                color_list=['C0', 'C1'],
                xlabel='Proportion of Trajectory',
                ylabel='Dispersion (mm)',
-               fig_name='phase_dispersion')
+               fig_name='phase_dispersion',
+               test=True)
 
     # plot group comparison
     read_label_list = ['avg_tra_vel',
