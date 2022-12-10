@@ -240,8 +240,16 @@ def two_set_scatter_plot(data1, data2, labels, title_str, ylabel, save_str):
     sem_data2 = data2.sem()
     data2_x = [2, ] * len(data2)
 
-    # Mann-Whitney U rank test
+    # Mann-Whitney U test, or Wilcoxon rank-sum test
     p_value = scipy.stats.mannwhitneyu(data1.dropna(), data2.dropna()).pvalue
+    wilcoxon_p_value = scipy.stats.ranksums(data1.dropna(), data2.dropna()).pvalue
+
+    # Shapiro-Wilk test of normality
+    l_normal_p = scipy.stats.shapiro(data1.dropna()).pvalue
+    r_normal_p = scipy.stats.shapiro(data2.dropna()).pvalue
+
+    # T-test
+    ttest_p_value = scipy.stats.ttest_ind(data1.dropna(), data2.dropna()).pvalue
 
     plt.figure(figsize=(2.5, 5))
     plt.scatter(data1_x, data1, 100, color='w', edgecolors='k', alpha=0.5)
@@ -269,7 +277,12 @@ def two_set_scatter_plot(data1, data2, labels, title_str, ylabel, save_str):
     plt.xticks([1, 2], labels, rotation=45)
     plt.locator_params(nbins=5, axis='y')
     plt.xlim([0.5, 2.5])
-    plt.title(title_str + "\nMann-Whitney U rank test P = {:.3f}".format(p_value))
+    plt.title(title_str
+              + "\nMann-Whitney U test P = {:.3f}".format(p_value)
+              + "\nWilcoxon rank-sum test P = {:.3f}".format(wilcoxon_p_value)
+              + "\nNormality test (left, right) P = ({:.3f}, {:.3f})".format(l_normal_p, r_normal_p)
+              + "\nT-test P = {:.3f}".format(ttest_p_value),
+              fontsize=12)
     plt.ylabel(ylabel)
     barplot_annotate_brackets(0, 1, p_value, [1, 2],
                               [mean_data1, mean_data2],
