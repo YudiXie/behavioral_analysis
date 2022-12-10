@@ -1,7 +1,7 @@
 import json
 import numpy as np
 
-from plots import two_set_scatter_plot
+from plots import two_set_scatter_plot, error_plot
 
 pixel_per_m = 325 / 0.320
 fps = 84
@@ -101,7 +101,21 @@ def group_ana(df):
             num_tra = len(all_tra)
             df.loc[i_video, 'num_tra'] = num_tra  # log
 
-    # plot the results
+    # plot dispersion at different phase of the trajectory
+    cols = [f'dispersion{i}' for i in range(num_p)]
+    control_data = df[df['genotype'] == 'control'].loc[:, cols]
+    rimKO_data = df[df['genotype'] == 'RIMcKO'].loc[:, cols]
+
+    x_axis = np.linspace(0, 1, num_p)
+    error_plot(x_axis,
+               data_list=[control_data, rimKO_data],
+               label_list=['Control', 'rimKO'],
+               color_list=['C0', 'C1'],
+               xlabel='Proportion of Trajectory',
+               ylabel='Dispersion (mm)',
+               fig_name='phase_dispersion')
+
+    # plot group comparison
     read_label_list = ['avg_tra_vel',
                        'num_tra',
                        'avg_tra_dis2line',

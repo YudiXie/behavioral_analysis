@@ -16,6 +16,36 @@ def adjust_figure():
     plt.tight_layout(pad=0.5)
 
 
+def error_plot(x_axis,
+               data_list,
+               label_list,
+               color_list,
+               xlabel,
+               ylabel,
+               fig_name):
+    plt.figure()
+    for data, label, color in zip(data_list, label_list, color_list):
+        mean = data.mean(axis=0)
+        error = data.std(axis=0)
+
+        # show errors as shaded regions
+        plt.plot(x_axis, mean, label=label, color=color)
+        plt.fill_between(
+            x=x_axis,
+            y1=mean - error,
+            y2=mean + error,
+            alpha=0.3,
+            color=color,
+            edgecolor=None,
+        )
+    plt.legend()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    adjust_figure()
+    plt.savefig(os.path.join('./figures', fig_name+'.pdf'), transparent=True)
+    plt.close()
+
+
 def plot_trajectories(exp_name,
                       left_tra_list, right_tra_list,
                       centerport_pos,
