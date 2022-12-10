@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import matplotlib.pyplot as plt
 import scipy.stats
@@ -22,7 +23,24 @@ def error_plot(x_axis,
                color_list,
                xlabel,
                ylabel,
-               fig_name):
+               fig_name,
+               test=False,
+               test_group=(0, 1),
+               dh=0.05):
+    """
+    Plot error bar
+    :param x_axis:
+    :param data_list: a list of dataframes, size (different animals, x_axis)
+    :param label_list:
+    :param color_list:
+    :param xlabel:
+    :param ylabel:
+    :param fig_name:
+    :param test: whether to perform statistical test
+    :param test_group: index of groups to perform test
+    :param dh: height offset over bar / bar + yerr in axes coordinates (0 to 1)
+    :return:
+    """
     plt.figure()
     for data, label, color in zip(data_list, label_list, color_list):
         mean = data.mean(axis=0)
@@ -38,6 +56,26 @@ def error_plot(x_axis,
             color=color,
             edgecolor=None,
         )
+
+    if test:
+        # perform statistical test
+        ax_ymin, ax_ymax = plt.gca().get_ylim()
+        dh *= (ax_ymax - ax_ymin)
+
+        p_value_list = []
+        max_mean_p_error = -np.inf
+        for i_x, x in enumerate(x_axis):
+            data1 = data_list[test_group[0]].iloc[:, i_x].dropna()
+            data2 = data_list[test_group[1]].iloc[:, i_x].dropna()
+            # Mann-Whitney U rank test
+            p_value_list.append(scipy.stats.mannwhitneyu(data1, data2).pvalue)
+
+            mean_p_error = max(data1.mean()+data1.std(), data2.mean()+data2.std())
+            if max_mean_p_error <= mean_p_error:
+                max_mean_p_error = mean_p_error
+        for x, p_value in zip(x_axis, p_value_list):
+            plt.text(x, max_mean_p_error + dh, get_stat_str(p_value), ha='center', va='bottom')
+
     plt.legend()
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -109,7 +147,34 @@ def plot_trajectories(exp_name,
     plt.close()
 
 
-def barplot_annotate_brackets(idx1, idx2, data, center, height, yerr=None, dh=.05, barh=.05, fs=None, maxasterix=None):
+def get_stat_str(p_value, maxasterix=None):
+    """
+    Get asterix string based on p value
+    :param p_value:
+    :param maxasterix: maximum number of asterixes to write (for very small p-values)
+    :return:
+    """
+    # * is p < 0.05
+    # ** is p < 0.005
+    # *** is p < 0.0005
+    # etc.
+    text = ''
+    p = .05
+
+    while p_value < p:
+        text += '*'
+        p /= 10.
+
+        if maxasterix and len(text) == maxasterix:
+            break
+
+    if len(text) == 0:
+        text = 'n. s.'
+
+    return text
+
+
+def barplot_annotate_brackets(idx1, idx2, data, center, height, yerr=None, dh=.05, barh=.05, fs=None):
     """
     Annotate barplot with p-values.
     adapted from:
@@ -124,28 +189,12 @@ def barplot_annotate_brackets(idx1, idx2, data, center, height, yerr=None, dh=.0
     :param dh: height offset over bar / bar + yerr in axes coordinates (0 to 1)
     :param barh: bar height in axes coordinates (0 to 1)
     :param fs: font size
-    :param maxasterix: maximum number of asterixes to write (for very small p-values)
     """
 
     if type(data) is str:
         text = data
     else:
-        # * is p < 0.05
-        # ** is p < 0.005
-        # *** is p < 0.0005
-        # etc.
-        text = ''
-        p = .05
-
-        while data < p:
-            text += '*'
-            p /= 10.
-
-            if maxasterix and len(text) == maxasterix:
-                break
-
-        if len(text) == 0:
-            text = 'n. s.'
+        text = get_stat_str(data)
 
     lx, ly = center[idx1], height[idx1]
     rx, ry = center[idx2], height[idx2]
