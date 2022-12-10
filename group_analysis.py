@@ -75,9 +75,12 @@ def group_ana(df):
             dist2avg = np.concatenate((left_dist2avg, right_dist2avg), axis=0)
             dist2avg = (dist2avg / pixel_per_m) * 1000  # convert to mm
             # calculate the distances to average trajectory of each trajectory, and take mean
-            df.loc[i_video, 'avg_tra_dis2avgtra'] = dist2avg.mean(axis=1).mean()  # log
-            # calculate the distances to average trajectory of each trajectory, and take std
-            df.loc[i_video, 'std_tra_dis2avgtra'] = dist2avg.mean(axis=1).std()  # log
+            df.loc[i_video, 'tra_deviation'] = dist2avg.mean(axis=1).mean()  # log
+            # calculate the center point dispersion
+            df.loc[i_video, 'dispersion_center'] = dist2avg[:, int(num_p/2)].mean()  # log
+            # log dispersion at different phase of the trajectory
+            for i_p in range(num_p):
+                df.loc[i_video, f'dispersion{i_p}'] = dist2avg[:, i_p].mean()  # log
 
             # calculate distance between trajectories and a straight line
             center_port = df.loc[i_video, 'center_port']
@@ -102,23 +105,27 @@ def group_ana(df):
     read_label_list = ['avg_tra_vel',
                        'num_tra',
                        'avg_tra_dis2line',
-                       'avg_tra_dis2avgtra',
-                       'std_tra_dis2avgtra']
+                       'tra_deviation',
+                       'dispersion_center',
+                       ]
     title_list = ['Averaged head speed',
                   'Number of trajectories',
                   'Averaged distance from \nline',
-                  'Averaged distance from \naveraged trajectory',
-                  'Std of distance from \naveraged trajectory']
+                  'Deviation from averaged \ntrajectory',
+                  'Center point dispersion',
+                  ]
     ylabel_list = ['Averaged Velocity (m/s)',
                    'Number of trajectories',
                    'Distance from line (mm)',
-                   'Distance from avg. tra. (mm)',
-                   'Std of distance from avg. tra (mm)']
+                   'Deviation from avg. tra. (mm)',
+                   'Center point dispersion (mm)',
+                   ]
     save_str_list = ['headspeed',
                      'num_tra',
                      'dis2line',
-                     'dis2avgtra',
-                     'std_dis2avgtra']
+                     'deviation_tra',
+                     'center_dispersion',
+                     ]
 
     for read_label, title, ylabel, save_str in zip(read_label_list, title_list, ylabel_list, save_str_list):
         control_data = df[df['genotype'] == 'control'].loc[:, read_label]

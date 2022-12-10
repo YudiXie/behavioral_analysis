@@ -36,7 +36,7 @@ def plot_all_tra(df):
 
 if __name__ == '__main__':
     df = make_df()
-    extract_trajectories(df)
+    # extract_trajectories(df)
     plot_all_tra(df)
     group_ana(df)
     dist_ana(df)
