@@ -143,13 +143,27 @@ def group_ana(df):
                      ]
 
     for read_label, title, ylabel, save_str in zip(read_label_list, title_list, ylabel_list, save_str_list):
+        # each dot in the plot is an animal per sessions
         control_data = df[df['genotype'] == 'control'].loc[:, read_label]
         rimKO_data = df[df['genotype'] == 'RIMcKO'].loc[:, read_label]
         two_set_scatter_plot(control_data, rimKO_data,
                              labels=["RIM Control", 'RIM cKO$^{DA}$'],
                              title_str=title+", first 2 sessions",
                              ylabel=ylabel,
-                             save_str=save_str+'_session12')
+                             save_str=save_str+'_session12_dot_animalxsession')
+
+        # each dot in the plot is an animal averaged over two sessions
+        control_df = df[df['genotype'] == 'control'].groupby('mouse_name').mean(numeric_only=True)
+        rimKO_df = df[df['genotype'] == 'RIMcKO'].groupby('mouse_name').mean(numeric_only=True)
+        # drop data with incomplete sessions
+        rimKO_df = rimKO_df.drop(['rim12', 'rim124', 'rim137'])
+        control_data = control_df.loc[:, read_label]
+        rimKO_data = rimKO_df.loc[:, read_label]
+        two_set_scatter_plot(control_data, rimKO_data,
+                             labels=["RIM Control", 'RIM cKO$^{DA}$'],
+                             title_str=title+", first 2 sessions",
+                             ylabel=ylabel,
+                             save_str=save_str+'_session12_dot_animal')
 
         control_s1_data = df[(df['genotype'] == 'control') & (df['session'] == 'TwoOdor-1')].loc[:, read_label]
         rimKO_s1_data = df[(df['genotype'] == 'RIMcKO') & (df['session'] == 'TwoOdor-1')].loc[:, read_label]
